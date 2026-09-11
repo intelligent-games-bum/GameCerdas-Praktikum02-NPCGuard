@@ -1,4 +1,0 @@
-repository "Intelligent Games Practice/GameCerdas_Praktikum01_NPCDetector@18968491507551@cloud"
-  path "/"
-    br "/main"
-    co "/main"
