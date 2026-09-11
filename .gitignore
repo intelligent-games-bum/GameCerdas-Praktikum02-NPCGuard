@@ -110,3 +110,7 @@ InitTestScene*.unity*
 
 # AGENTS
 .claudeignore
+
+# Assets
+Assets/Polytope Studio
+Assets/Materials

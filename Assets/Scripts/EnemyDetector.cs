@@ -45,6 +45,16 @@ public class EnemyDetector : MonoBehaviour
     [Tooltip("Reference to the Player Transform. Drag the Player object here.")]
     private Transform player;
 
+    [SerializeField]
+    [Tooltip("Optional sensor. When present, the Enemy only reacts to a Player " +
+             "it can actually see. Found on this object if left empty.")]
+    private NPCSensor sensor;
+
+    [SerializeField]
+    [Tooltip("Ignore a Player the sensor cannot see, however close it is. " +
+             "Turn this off for the original distance-only behaviour.")]
+    private bool requireLineOfSight = true;
+
     [Header("AI Parameters")]
     [SerializeField]
     [Min(0f)]
@@ -98,6 +108,11 @@ public class EnemyDetector : MonoBehaviour
 
     private void Start()
     {
+        if (sensor == null)
+        {
+            sensor = GetComponent<NPCSensor>();
+        }
+
         if (player == null)
         {
             Debug.LogError(
@@ -167,7 +182,15 @@ public class EnemyDetector : MonoBehaviour
     {
         EnemyState newState;
 
-        if (currentDistance <= alertRadius)
+        // A Player behind cover is not there as far as this detector is
+        // concerned, no matter how close the distance says it is. Without this
+        // the light would still turn red while the Player is safely hidden,
+        // and would contradict what NPCSensor and NPCBrain have decided.
+        if (requireLineOfSight && sensor != null && !sensor.CanSeePlayer)
+        {
+            newState = EnemyState.Idle;
+        }
+        else if (currentDistance <= alertRadius)
         {
             newState = EnemyState.Alert;
         }
